@@ -22,6 +22,7 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding-bottom: 60px; /* Añadir padding al final */
         }
 
         .header {
@@ -54,6 +55,8 @@
             cursor: pointer;
             user-select: none;
             transition: background 0.2s;
+            padding: 10px 0; /* Aumentar área táctil */
+            -webkit-tap-highlight-color: transparent; /* Eliminar highlight táctil */
         }
 
         .category-title:hover {
@@ -674,12 +677,26 @@
             });
         }
 
-        // Categoría colapsable
+        // Categoría colapsable con scroll a la vista si es necesario
         document.querySelectorAll('.category-title').forEach(function(title) {
-            title.addEventListener('click', function() {
+            title.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevenir comportamiento por defecto
                 const category = title.parentElement;
                 category.classList.toggle('open');
-            });
+                
+                // Mejorar el scroll para dispositivos móviles
+                if (category.classList.contains('open')) {
+                    requestAnimationFrame(() => {
+                        const rect = category.getBoundingClientRect();
+                        const offset = 20; // Margen adicional
+                        const top = window.pageYOffset + rect.top - offset;
+                        window.scrollTo({
+                            top: top,
+                            behavior: 'smooth'
+                        });
+                    });
+                }
+            }, {passive: false}); // Mejorar rendimiento táctil
         });
 
         // Filtro de búsqueda de clases ignorando acentos
